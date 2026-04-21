@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [v0.2.0](https://github.com/ContentOperations/landing-page/releases/tag/v0.2.0) | 2026-04-21
+
+### Features
+- second iteration [f9e3c28](https://github.com/ContentOperations/landing-page/commit/f9e3c28)
+
 ## [v0.1.0](https://github.com/ContentOperations/landing-page/releases/tag/v0.1.0) | 2026-04-21
 
 ### Features
