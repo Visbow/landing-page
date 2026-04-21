@@ -1,62 +1,29 @@
 "use client"
 
 import Link from "next/link"
-
-function cn(...classes: (string | boolean | undefined | null)[]) {
-  return classes.filter(Boolean).join(" ")
-}
-
-const COMPANY_LOGOS = {
-  chatgpt: (
-    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-      <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z" fill="#10A37F"/>
-    </svg>
-  ),
-  perplexity: (
-    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-      <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" fill="#6366F1"/>
-      <path d="M12 7l-5 2.5v5L12 17l5-2.5v-5L12 7z" fill="white"/>
-      <circle cx="12" cy="12" r="2" fill="#6366F1"/>
-    </svg>
-  ),
-  claude: (
-    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-      <rect width="24" height="24" rx="6" fill="#D26152"/>
-      <path d="M8 8h8v8H8V8z" fill="white" fillOpacity="0.8"/>
-      <circle cx="12" cy="12" r="2" fill="white"/>
-    </svg>
-  ),
-  gemini: (
-    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#4285F4"/>
-      <path d="M8.5 12l3.5 3 3.5-3-3.5-3-3.5 3z" fill="white"/>
-      <path d="M12 8v8M8.5 12h7" stroke="white" strokeWidth="1.5"/>
-    </svg>
-  ),
-}
+import { Mermaid } from "@/components/mermaid"
 
 function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--bg)]/95 backdrop-blur-sm border-b border-[var(--border)]">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FFFCF5]/95 backdrop-blur-sm border-b border-[#F5E6D3]">
       <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 no-underline">
-          <div className="coffee-cup">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M17 8H19C20.1046 8 21 8.89543 21 10V11C21 12.1046 20.1046 13 19 13H17.5V14C17.5 15.6569 16.1569 17 14.5 17H5.5C3.84315 17 2.5 15.6569 2.5 14V5C2.5 3.34315 3.84315 2 5.5 2H14.5C16.1569 2 17.5 3.34315 17.5 5V6H17.5C17.5 6 17.5 6 17.5 6C17.5 6 21 6 21 10V11C21 11 21 11 21 11C21 11 17.5 11 17.5 11V8Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <div className="flex items-center justify-center w-9 h-9 bg-gradient-to-br from-[#FF6B35] to-[#FF8F5E] rounded-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 8H19C20.1046 8 21 8.89543 21 10V11C21 12.1046 20.1046 13 19 13H17.5V14C17.5 15.6569 16.1569 17 14.5 17H5.5C3.84315 17 2.5 15.6569 2.5 14V5C2.5 3.34315 3.84315 2 5.5 2H14.5C16.1569 2 17.5 3.34315 17.5 5V6H17.5C17.5 6 17.5 6 17.5 6C17.5 6 21 6 21 10V11C21 11 21 11 21 11C21 11 17.5 11 17.5 11V8Z"/>
               <path d="M6 14H14.5" stroke="white" strokeWidth="2" strokeLinecap="round"/>
               <path d="M6 17H10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
             </svg>
           </div>
-          <span className="font-heading text-[22px] font-medium text-[var(--text-primary)]">Visbow</span>
+          <span className="font-[var(--font-heading),Georgia,serif] text-xl font-semibold text-[#2D2A26]">Visbow</span>
         </Link>
         
-        <div className="flex items-center gap-8">
-          <Link href="#features" className="nav-link hidden sm:block">Features</Link>
-          <Link href="#how-it-works" className="nav-link hidden sm:block">How it Works</Link>
-          <Link href="#pricing" className="nav-link hidden sm:block">Pricing</Link>
-          <Link href="#" className="btn-ghost hidden sm:block">Log in</Link>
-          <Link href="#" className="btn-primary">
-            Start my page
+        <div className="flex items-center gap-6">
+          <Link href="#features" className="text-[15px] font-medium text-[#6B6560] no-underline hover:text-[#2D2A26] transition-colors hidden md:block">Features</Link>
+          <Link href="#quick-start" className="text-[15px] font-medium text-[#6B6560] no-underline hover:text-[#2D2A26] transition-colors hidden md:block">Docs</Link>
+          <Link href="#pricing" className="text-[15px] font-medium text-[#6B6560] no-underline hover:text-[#2D2A26] transition-colors hidden md:block">Pricing</Link>
+          <Link href="#" className="text-sm font-semibold bg-[#FF6B35] text-white rounded-lg py-2.5 px-5 no-underline hover:bg-[#E85A2A] transition-colors shadow-md hover:shadow-lg">
+            Get API Key
           </Link>
         </div>
       </div>
@@ -65,76 +32,62 @@ function Navbar() {
 }
 
 function Hero() {
-  const platforms = [
-    { name: "ChatGPT", logo: COMPANY_LOGOS.chatgpt, color: "#10A37F" },
-    { name: "Perplexity", logo: COMPANY_LOGOS.perplexity, color: "#6366F1" },
-    { name: "Claude", logo: COMPANY_LOGOS.claude, color: "#D26152" },
-    { name: "Gemini", logo: COMPANY_LOGOS.gemini, color: "#4285F4" },
-  ]
-
   return (
-    <section className="pt-32 pb-20 px-6">
-      <div className="max-w-[1200px] mx-auto text-center">
-        <div className="inline-flex items-center gap-2 bg-[var(--accent-dim)] rounded-full px-4 py-2 mb-8">
-          <span className="w-2 h-2 bg-[var(--accent)] rounded-full animate-pulse"></span>
-          <span className="text-sm font-medium text-[var(--accent)]">Now tracking 4 AI platforms</span>
+    <section className="pt-40 pb-20 px-6 bg-[#FFFCF5]">
+      <div className="max-w-[900px] mx-auto text-center">
+        <div className="inline-flex items-center gap-2 bg-orange-50 border border-[#F5E6D3] rounded-full px-4 py-2 mb-8">
+          <span className="w-2 h-2 bg-[#FF6B35] rounded-full animate-pulse"></span>
+          <span className="text-sm font-medium text-[#FF6B35]">Now tracking 4 AI platforms</span>
         </div>
 
-        <h1 className="font-heading text-[clamp(44px,6vw,68px)] font-medium leading-[1.1] text-[var(--text-primary)] mb-6 max-w-[800px] mx-auto">
-          See how AI sees<br />
-          <span className="text-[var(--accent)]">your brand</span>
+        <h1 className="font-[var(--font-heading),Georgia,serif] text-[clamp(36px,5vw,56px)] font-semibold text-[#2D2A26] mb-6 leading-[1.1]">
+          The universal visibility API<br />
+          <span className="text-[#FF6B35]">for the AI era</span>
         </h1>
 
-        <p className="text-[20px] text-[var(--text-secondary)] max-w-[560px] mx-auto mb-10 leading-relaxed">
-          Visbow tracks your brand across ChatGPT, Claude, Perplexity, and Gemini. 
-          Know exactly where you appear, where you're missing, and what to do about it.
+        <p className="text-xl text-[#6B6560] max-w-[640px] mx-auto mb-8 leading-relaxed">
+          Stop building brand tracking from scratch. Monitor your presence across ChatGPT, Claude, Perplexity, and Gemini. Built for developers who ship.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <Link href="#" className="btn-primary text-base px-8 py-4">
-            Start my page
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+          <Link href="#" className="text-base font-semibold bg-[#FF6B35] text-white rounded-lg py-3 px-6 no-underline hover:bg-[#E85A2A] transition-colors inline-flex items-center gap-2 shadow-md hover:shadow-lg">
+            Start Free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </Link>
-          <Link href="#how-it-works" className="btn-secondary">
-            See how it works
+          <Link href="#" className="text-base font-medium bg-white text-[#2D2A26] border-2 border-[#E8D5C4] rounded-lg py-3 px-6 no-underline hover:border-[#FF6B35] hover:text-[#FF6B35] transition-colors">
+            View Documentation
           </Link>
         </div>
 
-        <p className="text-[15px] text-[var(--text-dim)]">
-          Free forever plan - No credit card required
-        </p>
-
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-6">
-          {platforms.map((platform) => (
-            <div key={platform.name} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[var(--border)]">
-              <div className="w-5 h-5">{platform.logo}</div>
-              <span className="text-sm font-medium text-[var(--text-primary)]">{platform.name}</span>
-            </div>
-          ))}
+        <div className="flex items-center justify-center gap-8 text-sm text-[#9C9690]">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            <span>9,000+ GitHub Stars</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>Free Forever Tier</span>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-function Stats() {
-  const stats = [
-    { value: "2M+", label: "queries tracked weekly" },
-    { value: "50K+", label: "brands monitored" },
-    { value: "99.9%", label: "uptime guaranteed" },
+function TrustedBy() {
+  const companies = [
+    "Flow", "MedtechVendors", "Cline", "Cursor", "Windsurf", "Stash"
   ]
-
+  
   return (
-    <section className="py-16 px-6 bg-[var(--bg-raised)] border-y border-[var(--border)]">
+    <section className="py-12 px-6 bg-[#FFF5E1] border-y border-[#F5E6D3]">
       <div className="max-w-[1000px] mx-auto">
-        <div className="flex flex-wrap justify-center gap-12 md:gap-20">
-          {stats.map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className="stat-number">{stat.value}</div>
-              <div className="text-[15px] text-[var(--text-secondary)] mt-1">{stat.label}</div>
-            </div>
+        <p className="text-center text-sm text-[#9C9690] mb-8">Trusted by Open Source, enterprise, and more than 35,000 of you</p>
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+          {companies.map((company) => (
+            <div key={company} className="text-lg font-semibold text-[#9C9690]">{company}</div>
           ))}
         </div>
       </div>
@@ -142,123 +95,414 @@ function Stats() {
   )
 }
 
-function FeatureSection() {
-  const features = [
-    {
-      logo: COMPANY_LOGOS.chatgpt,
-      title: "Track Every Mention",
-      description: "See which AI platforms mention your brand and where you rank. Get notified the moment something changes.",
-    },
-    {
-      logo: COMPANY_LOGOS.perplexity,
-      title: "Competitor Insights",
-      description: "Compare your visibility against competitors. Know who's winning the AI conversation and why.",
-    },
-    {
-      logo: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      ),
-      title: "Weekly Digests",
-      description: "Get actionable insights delivered to your inbox every week. No login required to stay informed.",
-    },
-    {
-      logo: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-          <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-      ),
-      title: "Actionable Tips",
-      description: "Don't just see the data - understand what to do about it. We tell you exactly how to improve.",
-    },
-  ]
-
+function ProblemSection() {
   return (
-    <section className="py-24 px-6" id="features">
-      <div className="max-w-[1100px] mx-auto">
+    <section className="py-24 px-6 bg-[#FFFCF5]">
+      <div className="max-w-[900px] mx-auto">
         <div className="text-center mb-16">
-          <div className="section-label">FEATURES</div>
-          <h2 className="section-h2 mt-3">
-            Everything you need to own<br />your <span className="text-[var(--accent)]">AI presence</span>
+          <h2 className="font-[var(--font-heading),Georgia,serif] text-[clamp(28px,4vw,40px)] font-semibold text-[#2D2A26] mb-4">
+            Context is everything
           </h2>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, i) => (
-            <div 
-              key={i} 
-              className="feature-card"
-              style={{ transition: 'transform 0.3s ease, background-color 0.3s ease' }}
-            >
-              <div className="w-12 h-12 rounded-xl bg-[var(--bg-raised)] flex items-center justify-center mb-4 text-[var(--accent)]">
-                {feature.logo}
-              </div>
-              <h3 className="font-heading text-[20px] font-medium text-[var(--text-primary)] mb-2">{feature.title}</h3>
-              <p className="text-[15px] text-[var(--text-secondary)] leading-relaxed">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function HowItWorks() {
-  const steps = [
-    {
-      number: "1",
-      title: "Add your brand",
-      description: "Enter your company name and the keywords that matter to your business.",
-    },
-    {
-      number: "2",
-      title: "We do the tracking",
-      description: "Our AI monitors ChatGPT, Claude, Perplexity, and Gemini every single week.",
-    },
-    {
-      number: "3",
-      title: "Get insights",
-      description: "See where you appear, where you're missing, and exactly what to fix.",
-    },
-  ]
-
-  return (
-    <section className="py-24 px-6 bg-[var(--bg-surface)]" id="how-it-works">
-      <div className="max-w-[1100px] mx-auto">
-        <div className="text-center mb-16">
-          <div className="section-label">HOW IT WORKS</div>
-          <h2 className="section-h2 mt-3">
-            Simpler than you think
-          </h2>
-          <p className="text-[18px] text-[var(--text-secondary)] mt-4 max-w-[500px] mx-auto">
-            From sign-up to your first insight in less than 2 minutes. No setup, no configuration.
+          <p className="text-lg text-[#6B6560]">
+            Without brand visibility data, even the smartest AI is just a expensive chatbot
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {steps.map((step, i) => (
+        <div className="bg-white border border-[#F5E6D3] rounded-xl p-6 font-mono text-sm shadow-sm">
+          <div className="text-[#9C9690] mb-4">~ marketing.team</div>
+          
+          <div className="space-y-2 mb-6">
+            <div className="flex items-center gap-2">
+              <span className="text-[#9C9690]">$</span>
+              <span className="text-[#6B6560]">init brand_tracking</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-red-500">✗</span>
+              <span className="text-[#6B6560]">Way too expensive. Manual research takes weeks.</span>
+            </div>
+            
+            <div className="flex items-center gap-2 mt-4">
+              <span className="text-[#9C9690]">$</span>
+              <span className="text-[#6B6560]">handle competitor_analysis</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-red-500">✗</span>
+              <span className="text-[#6B6560]">No unified API. Every platform is different.</span>
+            </div>
+            
+            <div className="flex items-center gap-2 mt-4">
+              <span className="text-[#9C9690]">$</span>
+              <span className="text-[#6B6560]">init ai_platform_presence</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-red-500">✗</span>
+              <span className="text-[#6B6560]">ChatGPT, Claude, Perplexity - how do I track all of them?</span>
+            </div>
+            
+            <div className="flex items-center gap-2 mt-4">
+              <span className="text-[#9C9690]">$</span>
+              <span className="text-[#6B6560]">get weekly_insights</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-red-500">✗</span>
+              <span className="text-[#6B6560]">Manual spreadsheets. Always outdated.</span>
+            </div>
+          </div>
+
+          <div className="border-t border-[#F5E6D3] pt-4 mt-4">
+            <div className="bg-orange-50 border border-[#F5E6D3] rounded-lg p-4">
+              <div className="text-[#FF6B35] font-semibold mb-2">BREAKING NEWS</div>
+              <div className="text-[#2D2A26]">
+                New visibility tracking just dropped: <span className="text-[#FF6B35]">Visbow</span> - AI Brand Intelligence Platform
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-[#F5E6D3] pt-4 mt-4">
+            <div className="flex items-center gap-2">
+              <span className="text-[#9C9690]">$</span>
+              <span className="text-[#6B6560]">compare tracking_methods</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-red-500">✗</span>
+              <span className="text-[#6B6560]">Manual: 6-8 weeks to set up</span>
+            </div>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-[#2ECC71]">✓</span>
+              <span className="text-[#6B6560]">Visbow: 2 minutes to integrate</span>
+            </div>
+          </div>
+
+          <div className="border-t border-[#F5E6D3] pt-4 mt-4">
+            <div className="flex items-center gap-2">
+              <span className="text-[#9C9690]">$</span>
+              <span className="text-[#6B6560]">init visbow</span>
+            </div>
+            <div className="text-[#2ECC71]">✓ Done. Ship your brand intelligence.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function QuickStart() {
+  const links = [
+    { label: "API Documentation", href: "#" },
+    { label: "TypeScript SDK", href: "#" },
+    { label: "Python SDK", href: "#" },
+    { label: "REST API Reference", href: "#" },
+    { label: "Developer Console (API Keys)", href: "#" },
+  ]
+
+  const endpoints = [
+    { method: "POST", path: "/v3/brands", description: "Add a brand to track" },
+    { method: "POST", path: "/v3/mentions", description: "Search mentions across platforms" },
+    { method: "GET", path: "/v3/visibility", description: "Get visibility scores" },
+  ]
+
+  return (
+    <section className="py-24 px-6 bg-[#FFF9ED]" id="quick-start">
+      <div className="max-w-[1100px] mx-auto">
+        <div className="grid md:grid-cols-2 gap-16">
+          <div>
+            <h2 className="font-[var(--font-heading),Georgia,serif] text-3xl font-semibold text-[#2D2A26] mb-8">
+              Quick Start
+            </h2>
+            <div className="space-y-3">
+              {links.map((link, i) => (
+                <a 
+                  key={i} 
+                  href={link.href}
+                  className="flex items-center gap-2 text-[#6B6560] hover:text-[#FF6B35] transition-colors no-underline group"
+                >
+                  <svg className="w-4 h-4 text-[#9C9690] group-hover:text-[#FF6B35] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 5l7 7-7 7"/>
+                  </svg>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h2 className="font-[var(--font-heading),Georgia,serif] text-3xl font-semibold text-[#2D2A26] mb-8">
+              Core API Endpoints
+            </h2>
+            <div className="space-y-4">
+              {endpoints.map((endpoint, i) => (
+                <div key={i} className="bg-white border border-[#F5E6D3] rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-xs font-bold bg-[#FF6B35] text-white px-2 py-0.5 rounded">{endpoint.method}</span>
+                    <code className="text-sm text-[#2D2A26] font-mono">{endpoint.path}</code>
+                  </div>
+                  <p className="text-sm text-[#9C9690]">{endpoint.description}</p>
+                </div>
+              ))}
+            </div>
+            <a href="#" className="inline-block mt-4 text-sm text-[#FF6B35] hover:underline">
+              Full reference → 
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Features() {
+  const features = [
+    {
+      title: "Multi-Platform Tracking",
+      description: "Track your brand across ChatGPT, Claude, Perplexity, and Gemini. One API to rule them all.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+        </svg>
+      ),
+    },
+    {
+      title: "Competitor Intelligence",
+      description: "Monitor competitor mentions and compare your visibility against them in real-time.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+      ),
+    },
+    {
+      title: "Weekly Reports",
+      description: "Get actionable insights delivered to your inbox every week. Know exactly what to fix.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      ),
+    },
+    {
+      title: "Sentiment Analysis",
+      description: "Understand how AI platforms talk about you. Positive, negative, or neutral - we track it all.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      ),
+    },
+    {
+      title: "Historical Data",
+      description: "Track changes over time. See how your visibility evolves week over week.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      ),
+    },
+  ]
+
+  return (
+    <section className="py-24 px-6 bg-white" id="features">
+      <div className="max-w-[1100px] mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="font-[var(--font-heading),Georgia,serif] text-[clamp(28px,4vw,40px)] font-semibold text-[#2D2A26] mb-4">
+            Five layers of visibility
+          </h2>
+          <p className="text-lg text-[#6B6560] max-w-[600px] mx-auto">
+            Everything you need to understand and improve your AI presence — all in one API.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, i) => (
             <div 
               key={i} 
-              className="how-step"
+              className="bg-[#FFFCF5] border border-[#F5E6D3] rounded-xl p-6 hover:border-[#FF6B35] hover:shadow-md transition-all group"
             >
-              <div className="step-number mb-6">
-                {step.number}
+              <div className="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center mb-4 text-[#FF6B35] group-hover:bg-[#FF6B35] group-hover:text-white transition-colors">
+                {feature.icon}
               </div>
-              <h3 className="font-heading text-[20px] font-medium text-[var(--text-primary)] mb-2">{step.title}</h3>
-              <p className="text-[15px] text-[var(--text-secondary)] leading-relaxed px-4">{step.description}</p>
+              <h3 className="text-lg font-semibold text-[#2D2A26] mb-2">{feature.title}</h3>
+              <p className="text-[#6B6560] leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  )
+}
 
-        <div className="mt-16 text-center">
-          <Link href="#" className="btn-primary">
-            Get Started Free
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </Link>
+function Architecture() {
+  const mermaidCode = `graph TD
+  A[Add Your Brand] --> B[Weekly AI Scanning]
+  B --> C{Query AI Platforms}
+  C -->|ChatGPT| D[ChatGPT]
+  C -->|Claude| E[Claude]
+  C -->|Perplexity| F[Perplexity]
+  C -->|Gemini| G[Gemini]
+  D --> H[Process Results]
+  E --> H
+  F --> H
+  G --> H
+  H --> I[Generate Report]
+  I --> J[Email Digest]
+  I --> K[Dashboard Update]
+  J --> L[Actionable Insights]
+  K --> L
+  style A fill:#FF6B35,color:#fff,stroke:#E85A2A
+  style B fill:#FFF5E1,stroke:#F5E6D3
+  style C fill:#FFFCF5,stroke:#F5E6D3
+  style D fill:#166534,stroke:#22C55E,color:#fff
+  style E fill:#166534,stroke:#22C55E,color:#fff
+  style F fill:#166534,stroke:#22C55E,color:#fff
+  style G fill:#166534,stroke:#22C55E,color:#fff
+  style H fill:#FFF5E1,stroke:#F5E6D3
+  style I fill:#FF6B35,color:#fff,stroke:#E85A2A
+  style L fill:#2D2A26,stroke:#F5E6D3,color:#fff`
+
+  return (
+    <section className="py-24 px-6 bg-[#FFF9ED]">
+      <div className="max-w-[1100px] mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="font-[var(--font-heading),Georgia,serif] text-[clamp(28px,4vw,40px)] font-semibold text-[#2D2A26] mb-4">
+            How It Works
+          </h2>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div>
+            <div className="bg-white border border-[#F5E6D3] rounded-2xl p-8 shadow-sm">
+              <h3 className="font-[var(--font-heading),Georgia,serif] text-xl font-semibold text-[#2D2A26] mb-6">
+                System Flow
+              </h3>
+              <Mermaid code={mermaidCode} id="visbow-arch-flow-light" />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-white border border-[#F5E6D3] rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-[#FF6B35]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-[#2D2A26]">Query Processing</h4>
+              </div>
+              <p className="text-[#6B6560]">
+                We query AI platforms with your brand name and track every mention, sentiment, and context.
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#F5E6D3] rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-[#FF6B35]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-[#2D2A26]">Analysis Engine</h4>
+              </div>
+              <p className="text-[#6B6560]">
+                Our ML models analyze mentions, extract sentiment, and identify competitive positioning.
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#F5E6D3] rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-[#FF6B35]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-[#2D2A26]">Weekly Reports</h4>
+              </div>
+              <p className="text-[#6B6560]">
+                Get detailed reports delivered to your inbox with actionable insights and recommendations.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Integrations() {
+  const integrations = [
+    "LangGraph", "CrewAI", "OpenAI SDK", "Mastra", "Zapier", "n8n", "Pipecat", "Vercel AI SDK"
+  ]
+
+  return (
+    <section className="py-24 px-6 bg-white">
+      <div className="max-w-[900px] mx-auto text-center">
+        <h2 className="font-[var(--font-heading),Georgia,serif] text-[clamp(28px,4vw,40px)] font-semibold text-[#2D2A26] mb-4">
+          Works with your stack
+        </h2>
+        <p className="text-lg text-[#6B6560] mb-12">
+          Seamlessly integrate with your existing AI development tools.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {integrations.map((item, i) => (
+            <div 
+              key={i} 
+              className="bg-[#FFFCF5] border border-[#F5E6D3] rounded-lg px-6 py-3 text-[#6B6560] font-medium hover:border-[#FF6B35] hover:text-[#FF6B35] hover:shadow-md transition-all cursor-pointer"
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function CodeExample() {
+  return (
+    <section className="py-24 px-6 bg-[#FFF9ED]">
+      <div className="max-w-[900px] mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="font-[var(--font-heading),Georgia,serif] text-[clamp(28px,4vw,40px)] font-semibold text-[#2D2A26] mb-4">
+            Just Visbow
+          </h2>
+          <p className="text-lg text-[#6B6560]">
+            One API call. All platforms. Always bleeding edge. Done.
+          </p>
+        </div>
+
+        <div className="bg-[#2D2A26] border border-[#2D2A26] rounded-xl overflow-hidden shadow-xl">
+          <div className="flex items-center gap-2 px-4 py-3 bg-[#1a1917] border-b border-[#3D3A36]">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <span className="ml-2 text-sm text-zinc-500">visbow-example.ts</span>
+          </div>
+          <pre className="p-6 text-sm font-mono overflow-x-auto">
+            <code className="text-zinc-300">
+{`import { Visbow } from 'visbow'
+
+const client = new Visbow({ apiKey: process.env.VISBOW_API_KEY })
+
+// Track your brand across all AI platforms
+const visibility = await client.visibility({
+  brand: 'YourCompany',
+  platforms: ['chatgpt', 'claude', 'perplexity', 'gemini']
+})
+
+console.log(visibility)
+// {
+//   chatgpt: { mentions: 42, sentiment: 'positive', rank: 3 },
+//   claude: { mentions: 28, sentiment: 'neutral', rank: 5 },
+//   perplexity: { mentions: 15, sentiment: 'positive', rank: 2 },
+//   gemini: { mentions: 8, sentiment: 'negative', rank: 7 }
+// }
+
+// Get weekly report
+const report = await client.reports.weekly()
+console.log(report.insights)
+// ["Your brand sentiment improved by 12% this week",
+//  "Competitor X is gaining visibility in Claude",
+//  "Consider optimizing your LinkedIn presence"]`}
+            </code>
+          </pre>
         </div>
       </div>
     </section>
@@ -272,60 +516,85 @@ function Pricing() {
       price: "$0",
       period: "forever",
       description: "Perfect for trying us out",
-      features: ["1 brand", "5 queries", "2 platforms", "7-day history", "Email support"],
-      featured: false,
-    },
-    {
-      name: "Starter",
-      price: "$19",
-      period: "/month",
-      description: "For small teams",
-      features: ["3 brands", "25 queries", "All 4 platforms", "Weekly reports", "Competitor tracking", "Priority support"],
-      featured: true,
+      features: [
+        "1 brand",
+        "1,000 queries/month",
+        "2 platforms",
+        "7-day history",
+        "Email support",
+      ],
     },
     {
       name: "Pro",
       price: "$49",
       period: "/month",
       description: "For growing businesses",
-      features: ["10 brands", "100 queries", "All 4 platforms", "Daily updates", "API access", "Custom alerts", "Dedicated support"],
-      featured: false,
+      features: [
+        "10 brands",
+        "10,000 queries/month",
+        "All 4 platforms",
+        "Daily updates",
+        "Competitor tracking",
+        "API access",
+        "Priority support",
+      ],
+      featured: true,
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      period: "",
+      description: "For large organizations",
+      features: [
+        "Unlimited brands",
+        "Unlimited queries",
+        "All platforms",
+        "Real-time updates",
+        "Custom integrations",
+        "Dedicated support",
+        "SLA guarantee",
+      ],
     },
   ]
 
   return (
-    <section className="py-24 px-6" id="pricing">
+    <section className="py-24 px-6 bg-[#FFFCF5]" id="pricing">
       <div className="max-w-[1100px] mx-auto">
         <div className="text-center mb-16">
-          <div className="section-label">PRICING</div>
-          <h2 className="section-h2 mt-3">
-            Start free. Scale as you grow.
+          <h2 className="font-[var(--font-heading),Georgia,serif] text-[clamp(28px,4vw,40px)] font-semibold text-[#2D2A26] mb-4">
+            Simple, transparent pricing
           </h2>
-          <p className="text-[18px] text-[var(--text-secondary)] mt-4 max-w-[500px] mx-auto">
-            All plans include our core tracking features. No hidden fees, no surprises.
+          <p className="text-lg text-[#6B6560]">
+            Start free. Scale as you grow. No hidden fees.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-[900px] mx-auto">
           {plans.map((plan, i) => (
-            <div key={i} className={cn("pricing-card", plan.featured && "featured")}>
-              <div className="text-sm font-medium text-[var(--text-dim)] uppercase tracking-wide mb-2">{plan.name}</div>
-              <div className="price-amount">
-                {plan.price === "$0" ? (
-                  <span>{plan.price}</span>
-                ) : (
-                  <>
-                    <sup>$</sup>{plan.price.replace("$","")}
-                  </>
-                )}
+            <div 
+              key={i} 
+              className={`bg-white border rounded-2xl p-8 text-center transition-all ${
+                plan.featured 
+                  ? 'border-[#FF6B35] shadow-lg relative' 
+                  : 'border-[#F5E6D3] hover:border-[#E8D5C4] hover:shadow-md'
+              }`}
+            >
+              {plan.featured && (
+                <div className="absolute top-[-12px] left-1/2 -translate-x-1/2 bg-[#FF6B35] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  Most Popular
+                </div>
+              )}
+              <div className="text-sm font-medium text-[#9C9690] uppercase tracking-wide mb-2">{plan.name}</div>
+              <div className="font-[var(--font-heading),Georgia,serif] text-[48px] font-semibold text-[#2D2A26]">
+                {plan.price}
               </div>
-              <div className="text-sm text-[var(--text-dim)] mt-1">{plan.period}</div>
-              <p className="text-[14px] text-[var(--text-secondary)] mt-4 mb-6">{plan.description}</p>
+              <div className="text-sm text-[#9C9690] mt-1">{plan.period}</div>
+              <p className="text-sm text-[#6B6560] mt-4 mb-6">{plan.description}</p>
               
               <ul className="space-y-3 text-left mb-8">
                 {plan.features.map((feature, j) => (
-                  <li key={j} className="flex items-center gap-2 text-[15px] text-[var(--text-secondary)]">
-                    <svg className="w-4 h-4 text-[var(--green)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <li key={j} className="flex items-center gap-2 text-sm text-[#6B6560]">
+                    <svg className="w-4 h-4 text-[#2ECC71] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path d="M5 13l4 4L19 7" />
                     </svg>
                     {feature}
@@ -333,8 +602,15 @@ function Pricing() {
                 ))}
               </ul>
 
-              <Link href="#" className={cn("btn-primary w-full", plan.featured ? "" : "bg-[var(--bg-raised)] text-[var(--text-primary)] hover:bg-[var(--border)]")}>
-                {plan.price === "$0" ? "Get Started" : "Start Trial"}
+              <Link 
+                href="#" 
+                className={`block w-full py-3 px-6 rounded-lg text-center font-semibold transition-all ${
+                  plan.featured 
+                    ? 'bg-[#FF6B35] text-white hover:bg-[#E85A2A] shadow-md hover:shadow-lg' 
+                    : 'bg-[#FFF5E1] text-[#2D2A26] hover:bg-[#F5E6D3]'
+                }`}
+              >
+                {plan.price === "Custom" ? "Contact Sales" : "Get Started"}
               </Link>
             </div>
           ))}
@@ -346,21 +622,25 @@ function Pricing() {
 
 function CTASection() {
   return (
-    <section className="py-24 px-6 bg-[var(--accent)] text-white">
+    <section className="py-24 px-6 bg-white">
       <div className="max-w-[700px] mx-auto text-center">
-        <h2 className="font-heading text-[clamp(36px,5vw,52px)] font-medium mb-4">
+        <h2 className="font-[var(--font-heading),Georgia,serif] text-[clamp(28px,4vw,44px)] font-semibold text-[#2D2A26] mb-4">
           Ready to own your AI presence?
         </h2>
-        <p className="text-[19px] opacity-90 mb-8 max-w-[500px] mx-auto">
+        <p className="text-lg text-[#6B6560] mb-8">
           Join thousands of marketers who already track their brand across every AI platform.
         </p>
-        <Link href="#" className="inline-flex items-center gap-2 bg-white text-[var(--accent)] font-semibold px-8 py-4 rounded-[12px] text-base hover:bg-opacity-90 transition-all">
-          Start my page
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </Link>
-        <p className="text-[15px] opacity-70 mt-4">It is free to get started</p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link href="#" className="text-base font-semibold bg-[#FF6B35] text-white rounded-lg py-3 px-8 no-underline hover:bg-[#E85A2A] transition-colors inline-flex items-center gap-2 shadow-md hover:shadow-lg">
+            Start Free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
+          <Link href="#" className="text-base font-semibold bg-[#FFF5E1] text-[#2D2A26] border-2 border-[#F5E6D3] rounded-lg py-3 px-8 no-underline hover:border-[#FF6B35] hover:text-[#FF6B35] transition-colors">
+            Talk to Sales
+          </Link>
+        </div>
       </div>
     </section>
   )
@@ -368,47 +648,47 @@ function CTASection() {
 
 function Footer() {
   const links = {
-    Product: ["Features", "Pricing", "Integrations", "Changelog"],
-    Company: ["About", "Blog", "Careers", "Press"],
-    Resources: ["Help Center", "API Docs", "Community", "Status"],
+    Product: ["Features", "Pricing", "Changelog", "Roadmap"],
+    Developers: ["Documentation", "API Reference", "SDKs", "Status"],
+    Company: ["About", "Blog", "Careers", "Contact"],
     Legal: ["Privacy", "Terms", "Security"],
   }
 
   return (
-    <footer className="py-16 px-6 border-t border-[var(--border)]">
+    <footer className="py-16 px-6 bg-[#FFF9ED] border-t border-[#F5E6D3]">
       <div className="max-w-[1100px] mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 no-underline mb-4">
-              <div className="coffee-cup w-8 h-8">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M17 8H19C20.1046 8 21 8.89543 21 10V11C21 12.1046 20.1046 13 19 13H17.5V14C17.5 15.6569 16.1569 17 14.5 17H5.5C3.84315 17 2.5 15.6569 2.5 14V5C2.5 3.34315 3.84315 2 5.5 2H14.5C16.1569 2 17.5 3.34315 17.5 5V6H17.5C17.5 6 17.5 6 17.5 6C17.5 6 21 6 21 10V11C21 11 21 11 21 11C21 11 17.5 11 17.5 11V8Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-[#FF6B35] to-[#FF8F5E] rounded-lg">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 8H19C20.1046 8 21 8.89543 21 10V11C21 12.1046 20.1046 13 19 13H17.5V14C17.5 15.6569 16.1569 17 14.5 17H5.5C3.84315 17 2.5 15.6569 2.5 14V5C2.5 3.34315 3.84315 2 5.5 2H14.5C16.1569 2 17.5 3.34315 17.5 5V6H17.5C17.5 6 17.5 6 17.5 6C17.5 6 21 6 21 10V11C21 11 21 11 21 11C21 11 17.5 11 17.5 11V8Z"/>
                   <path d="M6 14H14.5" stroke="white" strokeWidth="2" strokeLinecap="round"/>
                   <path d="M6 17H10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </div>
-              <span className="font-heading text-lg font-medium text-[var(--text-primary)]">Visbow</span>
+              <span className="font-[var(--font-heading),Georgia,serif] text-lg font-semibold text-[#2D2A26]">Visbow</span>
             </Link>
-            <p className="text-[15px] text-[var(--text-secondary)] mb-4">
+            <p className="text-sm text-[#6B6560] mb-4">
               Track your brand across every AI platform.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="text-[var(--text-dim)] hover:text-[var(--text-primary)] transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <a href="#" className="text-[#9C9690] hover:text-[#2D2A26] transition-colors">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
               </a>
-              <a href="#" className="text-[var(--text-dim)] hover:text-[var(--text-primary)] transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              <a href="#" className="text-[#9C9690] hover:text-[#2D2A26] transition-colors">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               </a>
             </div>
           </div>
 
           {Object.entries(links).map(([category, items]) => (
             <div key={category}>
-              <h4 className="font-medium text-[var(--text-primary)] mb-4">{category}</h4>
+              <h4 className="font-medium text-[#2D2A26] mb-4">{category}</h4>
               <ul className="space-y-2">
                 {items.map((item) => (
                   <li key={item}>
-                    <a href="#" className="text-[14px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                    <a href="#" className="text-sm text-[#6B6560] hover:text-[#2D2A26] transition-colors no-underline">
                       {item}
                     </a>
                   </li>
@@ -418,13 +698,13 @@ function Footer() {
           ))}
         </div>
 
-        <div className="pt-8 border-t border-[var(--border)] flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[14px] text-[var(--text-dim)]">
+        <div className="pt-8 border-t border-[#F5E6D3] flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-[#9C9690]">
             2026 Visbow. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-[14px] text-[var(--text-dim)]">
+          <div className="flex items-center gap-6 text-sm text-[#9C9690]">
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 bg-[var(--green)] rounded-full"></span>
+              <span className="w-2 h-2 bg-[#2ECC71] rounded-full"></span>
               All systems operational
             </span>
           </div>
@@ -436,13 +716,17 @@ function Footer() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)]">
+    <div className="min-h-screen bg-[#FFFCF5] text-[#2D2A26]">
       <Navbar />
       <main>
         <Hero />
-        <Stats />
-        <FeatureSection />
-        <HowItWorks />
+        <TrustedBy />
+        <ProblemSection />
+        <QuickStart />
+        <Features />
+        <Architecture />
+        <Integrations />
+        <CodeExample />
         <Pricing />
         <CTASection />
       </main>
