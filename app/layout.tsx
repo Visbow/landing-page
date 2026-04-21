@@ -1,16 +1,18 @@
-import { Geist, Geist_Mono, Space_Grotesk, Manrope } from "next/font/google"
-
+import { DM_Sans, Fraunces } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
 
-const manropeHeading = Manrope({subsets:['latin'],variable:'--font-heading'});
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+})
 
-const spaceGrotesk = Space_Grotesk({subsets:['latin'],variable:'--font-sans'})
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-heading',
+  display: 'swap',
 })
 
 export default function RootLayout({
@@ -19,13 +21,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", spaceGrotesk.variable, manropeHeading.variable)}
-    >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+    <html lang="en">
+      <body className={`${dmSans.variable} ${fraunces.variable} font-sans antialiased`}>
+        {children}
       </body>
     </html>
   )

@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visbow — AI Search Visibility, Tracked</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --bg:           #07090E;
+      --bg-surface:   #0C0F18;
+      --bg-raised:    #111827;
+      --border:       rgba(255,255,255,0.07);
+      --border-glow:  rgba(0,212,160,0.25);
+      --text-primary: #EDF2FF;
+      --text-secondary: #6B7B96;
+      --text-dim:     #3A4560;
+      --accent:       #00D4A0;
+      --accent-dim:   rgba(0,212,160,0.12);
+      --accent-glow:  rgba(0,212,160,0.4);
+      --gold:         #E8B84B;
+      --gold-dim:     rgba(232,184,75,0.1);
+      --radius:       12px;
+      --radius-lg:    20px;
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 400; line-height: 1.1; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* ─── LAYOUT ─── */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(24px) saturate(1.4);
+      background: rgba(7,9,14,0.75);
+      animation: fadeDown 0.6s ease both;
+    }
+    nav .inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      position: relative;
+    }
+    .logo-mark svg { width: 100%; height: 100%; }
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+    }
+    .nav-right { display: flex; align-items: center; gap: 32px; }
+    .nav-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text-primary); }
+    .btn-nav {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-nav:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 32px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Radial glow backdrop */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -56%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(ellipse at center, rgba(0,212,160,0.09) 0%, transparent 68%);
+      pointer-events: none;
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-glow);
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    .hero h1 {
+      font-size: clamp(52px, 7.5vw, 96px);
+      font-weight: 300;
+      line-height: 1.03;
+      letter-spacing: -0.02em;
+      max-width: 880px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero h1 span.gold {
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      max-width: 540px;
+      margin: 0 auto 52px;
+      line-height: 1.7;
+      animation: fadeUp 0.7s 0.4s ease both;
+    }
+
+    /* Email form */
+    .waitlist-form {
+      display: flex;
+      gap: 10px;
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+      animation: fadeUp 0.7s 0.5s ease both;
+    }
+    .waitlist-form input {
+      flex: 1;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .waitlist-form input::placeholder { color: var(--text-dim); }
+    .waitlist-form input:focus {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 0 3px rgba(0,212,160,0.08);
+    }
+    .btn-primary {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 10px;
+      padding: 14px 24px;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,212,160,0.28);
+    }
+
+    .social-proof {
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.03em;
+      animation: fadeUp 0.7s 0.65s ease both;
+    }
+    .social-proof span { color: var(--text-secondary); }
+
+    /* ─── RADAR VISUAL ─── */
+    .radar-wrapper {
+      position: relative;
+      margin: 80px auto 0;
+      width: 100%;
+      max-width: 900px;
+      animation: fadeUp 0.9s 0.7s ease both;
+    }
+
+    .radar-ui {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    }
+
+    .radar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #FF5F57; }
+    .dot.y { background: #FFBD2E; }
+    .dot.g { background: #28CA41; }
+    .radar-header-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-left: 6px;
+    }
+
+    .radar-body {
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .surface-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.2s;
+      cursor: default;
+    }
+    .surface-card:hover {
+      border-color: rgba(255,255,255,0.14);
+      transform: translateY(-2px);
+    }
+    .surface-card.active { border-color: var(--border-glow); }
+    .surface-card.active::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    .surface-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+    .surface-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      letter-spacing: 0.01em;
+    }
+    .surface-stat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 14px;
+    }
+    .bar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent);
+      transition: width 1.5s ease;
+      animation: barGrow 1.5s 1.2s ease both;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-glow);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      margin-top: 10px;
+    }
+    .badge.warn {
+      background: rgba(232,184,75,0.1);
+      border-color: rgba(232,184,75,0.2);
+      color: var(--gold);
+    }
+    .badge.miss {
+      background: rgba(255,90,90,0.08);
+      border-color: rgba(255,90,90,0.15);
+      color: #FF6B6B;
+    }
+
+    .radar-row {
+      grid-column: 1 / -1;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .mini-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-align: left;
+      padding: 0 12px 12px 0;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .mini-table td {
+      padding: 10px 12px 10px 0;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .mini-table td:first-child { color: var(--text-primary); font-weight: 500; }
+    .mention-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+    .dot-sm {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .dot-sm.miss { background: #FF6B6B; }
+
+    /* ─── SECTION SHARED ─── */
+    section { padding: 120px 0; position: relative; }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .section-h2 {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+    }
+
+    /* ─── PROBLEM ─── */
+    .problem {
+      border-top: 1px solid var(--border);
+    }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 60px;
+    }
+    .problem-copy p {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .problem-copy p strong { color: var(--text-primary); font-weight: 500; }
+
+    .stat-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-num .accent { color: var(--accent); }
+    .stat-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    .how {
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, transparent, rgba(0,212,160,0.02) 50%, transparent);
+    }
+    .how-header { text-align: center; margin-bottom: 72px; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      counter-reset: steps;
+    }
+    .step {
+      position: relative;
+      padding: 36px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 72px;
+      font-weight: 300;
+      line-height: 1;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+    .step h3 {
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    .step p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ─── PRICING ─── */
+    .pricing {
+      border-top: 1px solid var(--border);
+    }
+    .pricing-header { text-align: center; margin-bottom: 64px; }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .price-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .price-card:hover { border-color: rgba(255,255,255,0.12); }
+    .price-card.featured {
+      border-color: var(--border-glow);
+      background: linear-gradient(160deg, rgba(0,212,160,0.07), var(--bg-surface));
+    }
+    .price-card.featured::before {
+      content: 'POPULAR';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border-radius: 0 0 8px 8px;
+    }
+    .price-tier {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .price-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .price-amount sup {
+      font-size: 24px;
+      vertical-align: super;
+    }
+    .price-period {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 28px;
+    }
+    .price-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 24px;
+    }
+    .price-features { list-style: none; }
+    .price-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .price-features li::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+      font-size: 12px;
+      margin-top: 1px;
+    }
+
+    /* ─── CTA SECTION ─── */
+    .cta-section {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 160px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(0,212,160,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(42px, 6vw, 72px);
+      font-weight: 300;
+      line-height: 1.1;
+      max-width: 700px;
+      margin: 0 auto 24px;
+    }
+    .cta-section p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      font-weight: 300;
+      margin-bottom: 48px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text-secondary); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes breathe {
+      0%, 100% { opacity: 1; transform: translate(-50%, -56%) scale(1); }
+      50%       { opacity: 0.6; transform: translate(-50%, -56%) scale(1.1); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.7); }
+    }
+    @keyframes barGrow {
+      from { width: 0 !important; }
+      to   { width: var(--w); }
+    }
+    @keyframes mentionPop {
+      0%   { opacity: 0; transform: translateY(4px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scroll-reveal utility */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── TICKER ─── */
+    .ticker-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      background: var(--bg-surface);
+    }
+    .ticker-track {
+      display: flex;
+      gap: 48px;
+      animation: ticker 28s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .ticker-item .mention { color: var(--accent); }
+    .ticker-item .miss    { color: #FF6B6B; }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .problem-grid { grid-template-columns: 1fr; gap: 48px; }
+      .steps { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .radar-body { grid-template-columns: 1fr 1fr; }
+      .nav-right .nav-link { display: none; }
+    }
+    @media (max-width: 600px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+      .radar-body { grid-template-columns: 1fr; }
+      .waitlist-form { flex-direction: column; }
+      .stat-cards { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="inner">
+      <a href="#" class="logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="14" stroke="rgba(0,212,160,0.3)" stroke-width="1"/>
+            <circle cx="16" cy="16" r="9"  stroke="rgba(0,212,160,0.5)" stroke-width="1"/>
+            <circle cx="16" cy="16" r="4"  fill="#00D4A0"/>
+            <line x1="16" y1="16" x2="24" y2="8" stroke="#00D4A0" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+            <circle cx="24" cy="8" r="2" fill="#00D4A0" opacity="0.9"/>
+          </svg>
+        </div>
+        <span class="logo-text">Visbow</span>
+      </a>
+      <div class="nav-right">
+        <a href="#how" class="nav-link">HOW IT WORKS</a>
+        <a href="#pricing" class="nav-link">PRICING</a>
+        <a href="#waitlist" class="btn-nav">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap" style="margin-top:69px;">
+    <div class="ticker-track" id="ticker">
+      <div class="ticker-item">ChatGPT (OpenAI) <span class="mention">✓ mentioned</span> "best AI analytics tools"</div>
+      <div class="ticker-item">Perplexity <span class="miss">✗ missing</span> "SaaS marketing software"</div>
+      <div class="ticker-item">Claude (Anthropic) <span class="mention">✓ mentioned</span> "brand tracking tools"</div>
+      <div class="ticker-item">Gemini <span class="mention">✓ cited</span> "AI search visibility"</div>
+      <div class="ticker-item">ChatGPT <span class="miss">✗ missing</span> "competitor analysis AI"</div>
+      <div class="ticker-item">Perplexity <span class="mention">✓ mentioned</span> "growth marketing tools 2025"</div>
+      <div class="ticker-item">Claude <span class="miss">✗ missing</span> "B2B SaaS analytics"</div>
+      <div class="ticker-item">Gemini <span class="mention">✓ mentioned</span> "content marketing platform"</div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item">ChatGPT (OpenAI) <span class="mention">✓ mentioned</span> "best AI analytics tools"</div>
+      <div class="ticker-item">Perplexity <span class="miss">✗ missing</span> "SaaS marketing software"</div>
+      <div class="ticker-item">Claude (Anthropic) <span class="mention">✓ mentioned</span> "brand tracking tools"</div>
+      <div class="ticker-item">Gemini <span class="mention">✓ cited</span> "AI search visibility"</div>
+      <div class="ticker-item">ChatGPT <span class="miss">✗ missing</span> "competitor analysis AI"</div>
+      <div class="ticker-item">Perplexity <span class="mention">✓ mentioned</span> "growth marketing tools 2025"</div>
+      <div class="ticker-item">Claude <span class="miss">✗ missing</span> "B2B SaaS analytics"</div>
+      <div class="ticker-item">Gemini <span class="mention">✓ mentioned</span> "content marketing platform"</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow">
+      <div class="eyebrow-dot"></div>
+      Early Access — Join the Waitlist
+    </div>
+
+    <h1>
+      Is your brand <em>visible</em><br/>
+      where <span class="gold">AI answers</span>?
+    </h1>
+
+    <p class="hero-sub">
+      Visbow tracks your brand's presence across ChatGPT, Claude, Perplexity, and Gemini — every week. Know where you appear, where you don't, and why.
+    </p>
+
+    <form class="waitlist-form" id="hero-form" onsubmit="handleSubmit(event, 'hero-form')">
+      <input type="email" placeholder="you@company.com" required />
+      <button type="submit" class="btn-primary">Get Early Access →</button>
+    </form>
+
+    <p class="social-proof">No credit card needed &nbsp;·&nbsp; <span>Free tier at launch</span> &nbsp;·&nbsp; Join 200+ marketers waiting</p>
+
+    <!-- RADAR UI MOCKUP -->
+    <div class="radar-wrapper">
+      <div class="radar-ui">
+        <div class="radar-header">
+          <div class="dot r"></div>
+          <div class="dot y"></div>
+          <div class="dot g"></div>
+          <span class="radar-header-text">visbow.com — Brand Tracker — Week of Apr 14, 2026</span>
+        </div>
+        <div class="radar-body">
+          <!-- 4 surface cards -->
+          <div class="surface-card active">
+            <div class="surface-icon" style="background:rgba(16,163,127,0.12);">🤖</div>
+            <div class="surface-name">ChatGPT</div>
+            <div class="surface-stat mono">7 / 10 queries</div>
+            <div class="bar-track"><div class="bar-fill" style="--w:70%; width:70%;"></div></div>
+            <div class="badge">↑ 2 vs last week</div>
+          </div>
+
+          <div class="surface-card">
+            <div class="surface-icon" style="background:rgba(100,149,237,0.12);">🔮</div>
+            <div class="surface-name">Perplexity</div>
+            <div class="surface-stat mono">4 / 10 queries</div>
+            <div class="bar-track"><div class="bar-fill" style="--w:40%; width:40%; background: var(--gold);"></div></div>
+            <div class="badge warn">→ 0 vs last week</div>
+          </div>
+
+          <div class="surface-card active">
+            <div class="surface-icon" style="background:rgba(210,97,82,0.1);">✦</div>
+            <div class="surface-name">Claude</div>
+            <div class="surface-stat mono">8 / 10 queries</div>
+            <div class="bar-track"><div class="bar-fill" style="--w:80%; width:80%;"></div></div>
+            <div class="badge">↑ 3 vs last week</div>
+          </div>
+
+          <div class="surface-card">
+            <div class="surface-icon" style="background:rgba(66,133,244,0.1);">◈</div>
+            <div class="surface-name">Gemini</div>
+            <div class="surface-stat mono">2 / 10 queries</div>
+            <div class="bar-track"><div class="bar-fill" style="--w:20%; width:20%; background:#FF6B6B;"></div></div>
+            <div class="badge miss">↓ 4 vs last week</div>
+          </div>
+
+          <!-- Mention table -->
+          <div class="radar-row">
+            <table class="mini-table">
+              <thead>
+                <tr>
+                  <th>Query</th>
+                  <th>ChatGPT</th>
+                  <th>Perplexity</th>
+                  <th>Claude</th>
+                  <th>Gemini</th>
+                  <th>Sentiment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>best AI analytics tools</td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #2</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #4</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #1</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm miss"></span> —</span></td>
+                  <td style="color:var(--accent);">Positive</td>
+                </tr>
+                <tr>
+                  <td>SaaS marketing software</td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #5</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm miss"></span> —</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #3</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm miss"></span> —</span></td>
+                  <td style="color:var(--text-secondary);">Neutral</td>
+                </tr>
+                <tr>
+                  <td>brand tracking platform 2025</td>
+                  <td><span class="mention-chip"><span class="dot-sm miss"></span> —</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #2</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #2</span></td>
+                  <td><span class="mention-chip"><span class="dot-sm"></span> #6</span></td>
+                  <td style="color:var(--accent);">Positive</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="problem">
+    <div class="container">
+      <div class="section-label">THE SHIFT</div>
+      <div class="problem-grid">
+        <div class="problem-copy">
+          <h2 class="section-h2">AI is the<br/><em>new search</em>.<br/>Most brands<br/>are invisible in it.</h2>
+          <p style="margin-top:32px;">
+            When a buyer asks ChatGPT <em>"what's the best tool for brand analytics?"</em> — they get an answer instantly. <strong>No clicking. No scrolling. No chance to compete on SEO.</strong>
+          </p>
+          <p>
+            The brands mentioned in that answer capture the lead. The ones missing from it <strong>don't even know they're losing.</strong>
+          </p>
+          <p>
+            Visbow is the first tracker built specifically for this new reality — giving you the same visibility data for AI surfaces that Ahrefs gives you for Google.
+          </p>
+        </div>
+        <div class="stat-cards reveal">
+          <div class="stat-card">
+            <div class="stat-num"><span class="accent">58%</span></div>
+            <div class="stat-desc">of B2B buyers now use AI assistants during vendor research before visiting a website</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num"><span class="accent">4</span></div>
+            <div class="stat-desc">major AI surfaces to track — ChatGPT, Perplexity, Claude, and Gemini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num"><span class="accent">3×</span></div>
+            <div class="stat-desc">weekly query variance — AI answers change constantly, static snapshots mislead you</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num"><span class="accent">0</span></div>
+            <div class="stat-desc">tools existed to track this systematically — until now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="container">
+      <div class="how-header reveal">
+        <div class="section-label">HOW IT WORKS</div>
+        <h2 class="section-h2">Three steps to full<br/><em>AI visibility</em></h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal" style="transition-delay:0.1s">
+          <div class="step-num">01</div>
+          <h3>Define your signal</h3>
+          <p>Add your brand, up to 10 competitor brands, and the queries your customers are asking AI. Visbow handles variation, pronouns, and acronym matching automatically.</p>
+        </div>
+        <div class="step reveal" style="transition-delay:0.2s">
+          <div class="step-num">02</div>
+          <h3>We track every surface</h3>
+          <p>Each query runs 3× per AI provider to smooth variance — across ChatGPT, Claude, Perplexity, and Gemini. We capture mentions, position, sentiment, and citations from Perplexity and Gemini.</p>
+        </div>
+        <div class="step reveal" style="transition-delay:0.3s">
+          <div class="step-num">03</div>
+          <h3>Act on the trend</h3>
+          <p>Week-over-week dashboards show you where you gained, where you slipped, and which competitors are winning the AI conversation. Know what to fix and why.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="pricing-header reveal">
+        <div class="section-label">PRICING</div>
+        <h2 class="section-h2">Start free.<br/><em>Scale as you grow.</em></h2>
+        <p style="color:var(--text-secondary);margin-top:16px;font-size:15px;font-weight:300;">All plans include weekly tracking across 4 AI surfaces. No lock-in.</p>
+      </div>
+      <div class="pricing-grid">
+        <!-- Free -->
+        <div class="price-card reveal" style="transition-delay:0.05s">
+          <div class="price-tier">Free</div>
+          <div class="price-amount">$<span>0</span></div>
+          <div class="price-period">forever</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>1 brand tracked</li>
+            <li>3 queries</li>
+            <li>2 AI surfaces</li>
+            <li>7-day history</li>
+            <li>View-only reports</li>
+          </ul>
+        </div>
+        <!-- Starter -->
+        <div class="price-card featured reveal" style="transition-delay:0.1s">
+          <div class="price-tier">Starter</div>
+          <div class="price-amount"><sup>$</sup>49</div>
+          <div class="price-period">per month</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>1 brand tracked</li>
+            <li>10 queries</li>
+            <li>All 4 AI surfaces</li>
+            <li>Weekly cadence</li>
+            <li>Trend & sentiment data</li>
+            <li>Email digest</li>
+          </ul>
+        </div>
+        <!-- Growth -->
+        <div class="price-card reveal" style="transition-delay:0.15s">
+          <div class="price-tier">Growth</div>
+          <div class="price-amount"><sup>$</sup>69</div>
+          <div class="price-period">per month</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>3 brands tracked</li>
+            <li>30 queries</li>
+            <li>All 4 AI surfaces</li>
+            <li>Daily cadence</li>
+            <li>Competitor SWOT</li>
+            <li>Citation tracking</li>
+          </ul>
+        </div>
+        <!-- Scale -->
+        <div class="price-card reveal" style="transition-delay:0.2s">
+          <div class="price-tier">Scale</div>
+          <div class="price-amount"><sup>$</sup>99</div>
+          <div class="price-period">per month</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>10 brands tracked</li>
+            <li>100 queries</li>
+            <li>All 4 AI surfaces</li>
+            <li>Daily cadence</li>
+            <li>Full API access</li>
+            <li>Slack & email alerts</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="waitlist">
+    <div class="container">
+      <div class="section-label" style="margin-bottom:24px;">EARLY ACCESS</div>
+      <h2>
+        Get in before<br/><em>your competitors do.</em>
+      </h2>
+      <p>We're onboarding the first 200 teams personally. Join the waitlist and we'll reach out when your spot is ready.</p>
+
+      <form class="waitlist-form" id="cta-form" onsubmit="handleSubmit(event, 'cta-form')" style="margin:0 auto;">
+        <input type="email" placeholder="Work email address" required />
+        <button type="submit" class="btn-primary">Reserve My Spot →</button>
+      </form>
+      <p style="margin-top:18px;font-size:13px;color:var(--text-dim);">No spam. We'll email once when you're approved.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="logo" style="margin-bottom:8px;display:inline-flex;">
+            <div class="logo-mark" style="width:22px;height:22px;">
+              <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" stroke="rgba(0,212,160,0.3)" stroke-width="1"/>
+                <circle cx="16" cy="16" r="9"  stroke="rgba(0,212,160,0.5)" stroke-width="1"/>
+                <circle cx="16" cy="16" r="4"  fill="#00D4A0"/>
+                <line x1="16" y1="16" x2="24" y2="8" stroke="#00D4A0" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+                <circle cx="24" cy="8" r="2" fill="#00D4A0" opacity="0.9"/>
+              </svg>
+            </div>
+            <span class="logo-text" style="font-size:16px;">Visbow</span>
+          </div>
+          <div class="footer-copy">© 2026 Visbow. All rights reserved.</div>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="mailto:hello@visbow.com">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ─── Scroll reveal ───────────────────────────────────────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ─── Form handler ────────────────────────────────────────────────────────
+    function handleSubmit(e, formId) {
+      e.preventDefault();
+      const form = document.getElementById(formId);
+      const input = form.querySelector('input');
+      const btn   = form.querySelector('button');
+      const email = input.value;
+
+      btn.textContent = '✓ You\'re on the list';
+      btn.style.background = 'rgba(0,212,160,0.15)';
+      btn.style.color = 'var(--accent)';
+      btn.style.border = '1px solid var(--border-glow)';
+      input.value = '';
+      input.placeholder = 'Check your inbox soon!';
+      input.disabled = true;
+      btn.disabled = true;
+
+      // In production: POST to your API here
+      console.log('Waitlist signup:', email);
+    }
+
+    // ─── Animate mention rows with staggered pop ─────────────────────────────
+    document.querySelectorAll('.mini-table tbody tr').forEach((row, i) => {
+      row.style.opacity = '0';
+      row.style.animation = `mentionPop 0.4s ${1.4 + i * 0.12}s ease both`;
+    });
+  </script>
+</body>
+</html>
