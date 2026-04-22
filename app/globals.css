@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --font-heading: 'Fraunces', Georgia, serif;
-  --font-sans: 'DM Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: "Geist", sans-serif;
+  --font-mono: "Geist Mono", monospace;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #FFFCF5;
-  color: #2D2A26;
+  background-color: #ffffff;
+  color: #0a0a0a;
 }
