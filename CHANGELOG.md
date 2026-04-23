@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [v0.4.2](https://github.com/ContentOperations/landing-page/releases/tag/v0.4.2) | 2026-04-23
+
+### Bug Fixes
+- build issue [daf817d](https://github.com/ContentOperations/landing-page/commit/daf817d)
+
 ## [v0.4.1](https://github.com/ContentOperations/landing-page/releases/tag/v0.4.1) | 2026-04-23
 
 ### Bug Fixes
