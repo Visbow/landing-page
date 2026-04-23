@@ -3,7 +3,9 @@ declare module 'meshline' {
   export const MeshLineMaterial: any;
 }
 
-declare global {
+import 'react'
+
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       meshLineGeometry: any;

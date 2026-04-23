@@ -1,6 +1,15 @@
 /* eslint-disable react/no-unknown-property */
 'use client';
 
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      meshLineGeometry: any;
+      meshLineMaterial: any;
+    }
+  }
+}
+
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, extend, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
