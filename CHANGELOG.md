@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [v0.4.0](https://github.com/ContentOperations/landing-page/releases/tag/v0.4.0) | 2026-04-23
+
+### Features
+- good to ship iteration [09efa9f](https://github.com/ContentOperations/landing-page/commit/09efa9f)
+
 ## [v0.3.0](https://github.com/ContentOperations/landing-page/releases/tag/v0.3.0) | 2026-04-22
 
 ### Features
