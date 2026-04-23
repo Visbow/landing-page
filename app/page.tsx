@@ -407,7 +407,178 @@ const FEATURES_LIST = [
   },
 ]
 
+const LAYER_BASE_Y = [96, 180, 264, 348, 432]
+
+function ExplodedStack({ active }: { active: number }) {
+  const cx = 172
+
+  return (
+    <svg viewBox="0 0 420 510" className="w-full max-w-[380px]" style={{ overflow: "visible" }}>
+      {[4, 3, 2, 1, 0].map((i) => {
+        const item = FEATURES_LIST[i]
+        const ia   = i === active
+        const sy   = LAYER_BASE_Y[i]
+        const c    = item.color
+        const tc   = ia ? c : "#C4D4E8"
+        const rc   = ia ? c : "#A8BCCE"
+        const lc   = ia ? c : "#8AA0B6"
+
+        return (
+          <g key={i} style={{
+            transform: `translateY(${ia ? -24 : 0}px)`,
+            transition: "transform 0.45s cubic-bezier(0.34,1.56,0.64,1)",
+          }}>
+
+            {/* 0 · TRACKING — iso platform with 3×3 grid + 4 signal nodes */}
+            {i === 0 && (() => {
+              const hw = 96, hh = 48, T = 10
+              const gridLines: [number, number, number, number][] = [
+                [cx + hw/3, sy - hh*2/3,  cx - hw*2/3, sy + hh/3  ],
+                [cx + hw*2/3, sy - hh/3,  cx - hw/3,   sy + hh*2/3],
+                [cx - hw/3, sy - hh*2/3,  cx + hw*2/3, sy + hh/3  ],
+                [cx - hw*2/3, sy - hh/3,  cx + hw/3,   sy + hh*2/3],
+              ]
+              const nodes: [number, number][] = [
+                [cx,          sy - hh/3],
+                [cx - hw/3,   sy       ],
+                [cx + hw/3,   sy       ],
+                [cx,          sy + hh/3],
+              ]
+              return (
+                <>
+                  <polygon points={`${cx-hw},${sy} ${cx},${sy+hh} ${cx},${sy+hh+T} ${cx-hw},${sy+T}`} fill={lc} opacity={ia ? 0.6 : 1} />
+                  <polygon points={`${cx+hw},${sy} ${cx},${sy+hh} ${cx},${sy+hh+T} ${cx+hw},${sy+T}`} fill={rc} opacity={ia ? 0.8 : 1} />
+                  <polygon points={`${cx-hw},${sy} ${cx},${sy-hh} ${cx+hw},${sy} ${cx},${sy+hh}`} fill={tc} />
+                  {gridLines.map(([x1, y1, x2, y2], k) => (
+                    <line key={k} x1={x1} y1={y1} x2={x2} y2={y2}
+                      stroke={ia ? "white" : "#A8BCCE"} strokeWidth={1} opacity={0.45} />
+                  ))}
+                  {nodes.map(([nx, ny], k) => (
+                    <circle key={k} cx={nx} cy={ny} r={5}
+                      fill={ia ? "white" : "#8AA0B6"} stroke={ia ? c : "#6B8BA8"} strokeWidth={1.2} opacity={ia ? 0.95 : 0.8} />
+                  ))}
+                  <text x={cx + hw + 12} y={sy + 6} fill={lc} fontSize={10} fontWeight="700"
+                    fontFamily="var(--font-mono)" letterSpacing="0.12em" style={{ userSelect: "none" }}>TRACKING</text>
+                </>
+              )
+            })()}
+
+            {/* 1 · COMPETITOR — 3 standalone isometric pillars */}
+            {i === 1 && (() => {
+              const pillars = [{ bx: cx - 38, h: 34 }, { bx: cx, h: 54 }, { bx: cx + 38, h: 24 }]
+              const bw = 11, bh = 5.5
+              return (
+                <>
+                  {pillars.map(({ bx, h }, k) => (
+                    <g key={k}>
+                      <polygon points={`${bx-bw},${sy-h} ${bx},${sy-h+bh} ${bx},${sy+bh} ${bx-bw},${sy}`} fill={lc} opacity={ia ? 0.6 : 0.85} />
+                      <polygon points={`${bx+bw},${sy-h} ${bx},${sy-h+bh} ${bx},${sy+bh} ${bx+bw},${sy}`} fill={rc} opacity={ia ? 0.8 : 1} />
+                      <polygon points={`${bx-bw},${sy-h} ${bx},${sy-h-bh} ${bx+bw},${sy-h} ${bx},${sy-h+bh}`} fill={tc} />
+                    </g>
+                  ))}
+                  <polyline points={pillars.map(({ bx, h }) => `${bx},${sy - h - bh}`).join(" ")}
+                    fill="none" stroke={ia ? c : "#A8BCCE"} strokeWidth={1.5} strokeDasharray="4 3" opacity={0.65} />
+                  <text x={cx + 38 + 11 + 14} y={sy + 6} fill={lc} fontSize={10} fontWeight="700"
+                    fontFamily="var(--font-mono)" letterSpacing="0.12em" style={{ userSelect: "none" }}>COMPETITOR</text>
+                </>
+              )
+            })()}
+
+            {/* 2 · DIGEST — 3 staggered isometric thin slabs (stacked docs) */}
+            {i === 2 && (() => {
+              const hw = 42, hh = 21, T = 4
+              const papers = [{ ox: -20, oy: -10 }, { ox: -10, oy: -5 }, { ox: 0, oy: 0 }]
+              return (
+                <>
+                  {papers.map(({ ox, oy }, k) => {
+                    const px = cx + ox, py = sy + oy
+                    const op = 0.55 + k * 0.225
+                    return (
+                      <g key={k}>
+                        <polygon points={`${px-hw},${py} ${px},${py+hh} ${px},${py+hh+T} ${px-hw},${py+T}`} fill={lc} opacity={(ia ? 0.6 : 1) * op} />
+                        <polygon points={`${px+hw},${py} ${px},${py+hh} ${px},${py+hh+T} ${px+hw},${py+T}`} fill={rc} opacity={(ia ? 0.8 : 1) * op} />
+                        <polygon points={`${px-hw},${py} ${px},${py-hh} ${px+hw},${py} ${px},${py+hh}`} fill={tc} opacity={(ia ? 0.95 : 1) * op} />
+                      </g>
+                    )
+                  })}
+                  <text x={cx + hw + 14} y={sy + 6} fill={lc} fontSize={10} fontWeight="700"
+                    fontFamily="var(--font-mono)" letterSpacing="0.12em" style={{ userSelect: "none" }}>DIGEST</text>
+                </>
+              )
+            })()}
+
+            {/* 3 · SENTIMENT — iso diamond nodes in hub-and-spoke */}
+            {i === 3 && (() => {
+              const nhw = 9, nhh = 4.5
+              const hx = cx, hy = sy - 8
+              const spokes: [number, number][] = [
+                [cx - 36, sy + 10],
+                [cx + 36, sy + 10],
+                [cx - 22, sy - 32],
+                [cx + 22, sy - 32],
+              ]
+              const nc = ia ? c : "#C4D4E8"
+              return (
+                <>
+                  {spokes.map(([nx, ny], k) => (
+                    <line key={k} x1={hx} y1={hy} x2={nx} y2={ny}
+                      stroke={nc} strokeWidth={1.5} strokeDasharray="4 3" opacity={0.6} />
+                  ))}
+                  {spokes.map(([nx, ny], k) => (
+                    <polygon key={k}
+                      points={`${nx-nhw},${ny} ${nx},${ny-nhh} ${nx+nhw},${ny} ${nx},${ny+nhh}`}
+                      fill={nc} opacity={ia ? 0.75 : 0.8} />
+                  ))}
+                  <polygon
+                    points={`${hx-nhw*1.4},${hy} ${hx},${hy-nhh*1.4} ${hx+nhw*1.4},${hy} ${hx},${hy+nhh*1.4}`}
+                    fill={nc} opacity={ia ? 1 : 0.9} />
+                  <text x={cx + 46} y={sy - 6} fill={lc} fontSize={10} fontWeight="700"
+                    fontFamily="var(--font-mono)" letterSpacing="0.12em" style={{ userSelect: "none" }}>SENTIMENT</text>
+                </>
+              )
+            })()}
+
+            {/* 4 · TRENDS — iso platform + 5 mini rising bars */}
+            {i === 4 && (() => {
+              const hw = 88, hh = 44, T = 8
+              const bars = [
+                { bx: cx - 32, h: 8  },
+                { bx: cx - 16, h: 14 },
+                { bx: cx,      h: 12 },
+                { bx: cx + 16, h: 20 },
+                { bx: cx + 32, h: 26 },
+              ]
+              const bw = 6, bh = 3
+              return (
+                <>
+                  <polygon points={`${cx-hw},${sy} ${cx},${sy+hh} ${cx},${sy+hh+T} ${cx-hw},${sy+T}`} fill={lc} opacity={ia ? 0.6 : 1} />
+                  <polygon points={`${cx+hw},${sy} ${cx},${sy+hh} ${cx},${sy+hh+T} ${cx+hw},${sy+T}`} fill={rc} opacity={ia ? 0.8 : 1} />
+                  <polygon points={`${cx-hw},${sy} ${cx},${sy-hh} ${cx+hw},${sy} ${cx},${sy+hh}`} fill={tc} />
+                  {bars.map(({ bx, h }, k) => (
+                    <g key={k}>
+                      <polygon points={`${bx-bw},${sy-h} ${bx},${sy-h+bh} ${bx},${sy+bh} ${bx-bw},${sy}`} fill={lc} opacity={ia ? 0.6 : 0.85} />
+                      <polygon points={`${bx+bw},${sy-h} ${bx},${sy-h+bh} ${bx},${sy+bh} ${bx+bw},${sy}`} fill={rc} opacity={ia ? 0.8 : 1} />
+                      <polygon points={`${bx-bw},${sy-h} ${bx},${sy-h-bh} ${bx+bw},${sy-h} ${bx},${sy-h+bh}`} fill={tc} />
+                    </g>
+                  ))}
+                  <polyline points={bars.map(({ bx, h }) => `${bx},${sy - h - bh}`).join(" ")}
+                    fill="none" stroke={ia ? "white" : "#A8BCCE"} strokeWidth={1.5} strokeDasharray="4 3" opacity={0.6} />
+                  <text x={cx + hw + 12} y={sy + 6} fill={lc} fontSize={10} fontWeight="700"
+                    fontFamily="var(--font-mono)" letterSpacing="0.12em" style={{ userSelect: "none" }}>TRENDS</text>
+                </>
+              )
+            })()}
+
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
 function FeaturesSection() {
+  const [active, setActive] = useState(0)
+
   return (
     <section className="px-6 pb-12 max-w-[1200px] mx-auto">
       <div className="mb-8">
@@ -416,18 +587,37 @@ function FeaturesSection() {
           Five layers of visibility
         </h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {FEATURES_LIST.map((item) => (
-          <div key={item.num} className="rounded-xl border border-[#EBEBEB] bg-white p-6 flex flex-col gap-3">
-            <span className="font-[var(--font-mono)] text-[13px] font-bold" style={{ color: item.color }}>
-              {item.num}
-            </span>
-            <h3 className="text-[16px] font-bold tracking-[-0.01em] text-[#0A0A0A] leading-snug">
-              {item.title}
-            </h3>
-            <p className="text-[13px] leading-[1.7] text-[#666]">{item.body}</p>
-          </div>
-        ))}
+      <div className="rounded-2xl border border-[#EBEBEB] overflow-hidden flex flex-col lg:flex-row">
+        <div
+          className="flex-1 border-b lg:border-b-0 lg:border-r border-[#EBEBEB] flex items-center justify-center min-h-[480px] py-10"
+          style={{ background: "linear-gradient(160deg, #EBF0FA 0%, #E4ECF5 100%)" }}
+        >
+          <ExplodedStack active={active} />
+        </div>
+        <div className="w-full lg:w-[420px] shrink-0 flex flex-col divide-y divide-[#EBEBEB]">
+          {FEATURES_LIST.map((item, i) => (
+            <button
+              key={item.num}
+              onClick={() => setActive(i)}
+              className={`flex items-start gap-4 px-7 py-5 text-left w-full transition-colors cursor-pointer ${active === i ? "bg-white" : "bg-white hover:bg-[#FAFAFA]"}`}
+            >
+              <span className="font-[var(--font-mono)] text-[13px] font-bold shrink-0 mt-0.5" style={{ color: item.color }}>
+                {item.num}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className={`text-[15px] font-bold tracking-[-0.01em] transition-colors ${active === i ? "text-[#0A0A0A]" : "text-[#888]"}`}>
+                    {item.title}
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: item.color }} />
+                </div>
+                {active === i && (
+                  <p className="mt-2 text-[13px] leading-[1.7] text-[#666]">{item.body}</p>
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   )
