@@ -1,8 +1,14 @@
 "use client"
 
-import { useActionState } from "react"
-import Link from "next/link"
+import { useActionState, useState } from "react"
+import dynamic from "next/dynamic"
 import { joinWaitlist, type WaitlistResult } from "@/app/actions/waitlist"
+
+const Lanyard = dynamic(() => import("@/components/Lanyard"), { ssr: false })
+const MermaidChart = dynamic(
+  () => import("@/components/mermaid").then((m) => ({ default: m.Mermaid })),
+  { ssr: false }
+)
 
 // ─── Primitives ──────────────────────────────────────────────────────────────
 
@@ -25,27 +31,6 @@ function Label({ children, light = false }: { children: React.ReactNode; light?:
     >
       {children}
     </p>
-  )
-}
-
-// ─── Nav ─────────────────────────────────────────────────────────────────────
-
-function Nav() {
-  return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#EBEBEB]">
-      <div className="max-w-[1200px] mx-auto px-6 h-[60px] flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 no-underline">
-          <Logo size={40} color="#3B82F6" />
-          <span className="text-[20px] font-bold tracking-tight text-[#0A0A0A]">visbow</span>
-        </Link>
-        <div className="flex items-center gap-2 bg-[#F0F5FF] rounded-full px-4 py-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] animate-pulse" />
-          <span className="font-[var(--font-mono)] text-[11px] tracking-[0.12em] uppercase text-[#3B82F6]">
-            coming soon
-          </span>
-        </div>
-      </div>
-    </nav>
   )
 }
 
@@ -99,27 +84,30 @@ function WaitlistForm() {
 function Hero() {
   return (
     <section className="px-6 pt-16 pb-10 max-w-[1200px] mx-auto">
-      <div className="inline-flex items-center gap-2 bg-[#EFF6FF] rounded-full px-4 py-1.5 mb-7">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />
-        <span className="font-[var(--font-mono)] text-[11px] tracking-[0.14em] uppercase text-[#3B82F6]">
-          Pre-launch · Join the waitlist
-        </span>
+      <div className="flex flex-col lg:flex-row lg:items-center gap-0">
+        {/* Left: copy */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-[clamp(56px,8vw,104px)] font-extrabold tracking-[-0.04em] leading-[1.0] text-[#0A0A0A] mb-6">
+            See where AI<br />sends buyers.
+          </h1>
+
+          <p className="text-[19px] leading-[1.7] text-[#555] max-w-[500px] mb-10">
+            ChatGPT, Claude, Perplexity and Gemini are answering your buyers&apos; questions. Visbow
+            shows you what they&apos;re saying and what&apos;s missing.
+          </p>
+
+          <WaitlistForm />
+
+          <p className="mt-5 font-[var(--font-mono)] text-[11px] tracking-[0.08em] text-[#6B6B6B]">
+            · launching this year · one email when we ship, nothing else
+          </p>
+        </div>
+
+        {/* Right: lanyard */}
+        <div className="hidden lg:block w-[480px] h-[600px] shrink-0">
+          <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} />
+        </div>
       </div>
-
-      <h1 className="text-[clamp(56px,8vw,104px)] font-extrabold tracking-[-0.04em] leading-[1.0] text-[#0A0A0A] mb-6 max-w-[820px]">
-        See where AI<br />sends buyers.
-      </h1>
-
-      <p className="text-[19px] leading-[1.7] text-[#555] max-w-[500px] mb-10">
-        ChatGPT, Claude, Perplexity and Gemini are answering your buyers&apos; questions. Visbow
-        shows you what they&apos;re saying — and what&apos;s missing.
-      </p>
-
-      <WaitlistForm />
-
-      <p className="mt-5 font-[var(--font-mono)] text-[11px] tracking-[0.08em] text-[#BEBEBE]">
-        · launching this year · one email when we ship, nothing else
-      </p>
     </section>
   )
 }
@@ -144,7 +132,7 @@ const MODULES = [
   {
     num: "03",
     title: "Create",
-    body: "Briefs that move AI's answers. Content shaped for how LLMs pick sources — not keyword-stuffed blog posts.",
+    body: "Briefs that move AI's answers. Content shaped for how LLMs pick sources, not keyword-stuffed blog posts.",
     bg: "bg-white",
   },
 ]
@@ -164,7 +152,7 @@ function BentoGrid() {
           </h2>
           <p className="mt-4 text-[15px] leading-[1.7] text-[#C4ADEE]">
             AI surfaces are answering your buyers&apos; questions before they reach your site.
-            Visbow tracks what ChatGPT, Claude, Perplexity and Gemini say about your brand —
+            Visbow tracks what ChatGPT, Claude, Perplexity and Gemini say about your brand
             and what&apos;s missing. One view. Refreshed weekly.
           </p>
           <div className="flex flex-wrap gap-2 mt-8">
@@ -230,24 +218,26 @@ function BentoGrid() {
 // ─── Context Bento ────────────────────────────────────────────────────────────
 
 function ContextBento() {
+  const [hovered, setHovered] = useState<number | null>(null)
+
   const card1 = (
     <>
-      <span className="font-[var(--font-mono)] text-[10px] tracking-[0.16em] uppercase text-[#B45309]">
+      <span className="font-[var(--font-mono)] text-[12px] tracking-[0.16em] uppercase text-[#B45309]">
         Who it&apos;s for
       </span>
-      <h3 className="mt-3 text-[22px] font-extrabold tracking-[-0.03em] leading-[1.2] text-[#111827]">
+      <h3 className="mt-4 text-[26px] font-extrabold tracking-[-0.03em] leading-[1.2] text-[#111827]">
         B2B marketing teams at growing companies.
       </h3>
-      <p className="mt-3 text-[13px] leading-[1.7] text-[#6B7280]">
+      <p className="mt-4 text-[15px] leading-[1.7] text-[#6B7280]">
         You run content at a 50 to 500 person company, small team, no dedicated AI-search tooling. Visbow is built for this.
       </p>
-      <div className="flex flex-col gap-2 mt-5">
+      <div className="flex flex-col gap-3 mt-6">
         {["50–500 person company", "Small content team", "No AI-search visibility yet"].map((t) => (
-          <div key={t} className="flex items-center gap-2">
+          <div key={t} className="flex items-center gap-2.5">
             <span className="w-4 h-4 rounded-full bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
             </span>
-            <span className="text-[12.5px] font-medium text-[#374151]">{t}</span>
+            <span className="text-[14px] font-medium text-[#374151]">{t}</span>
           </div>
         ))}
       </div>
@@ -256,16 +246,16 @@ function ContextBento() {
 
   const card2 = (
     <>
-      <span className="font-[var(--font-mono)] text-[10px] tracking-[0.16em] uppercase text-[#5EEAD4]">
+      <span className="font-[var(--font-mono)] text-[12px] tracking-[0.16em] uppercase text-[#5EEAD4]">
         Why now
       </span>
-      <h3 className="mt-3 text-[22px] font-extrabold tracking-[-0.03em] leading-[1.2] text-white">
+      <h3 className="mt-4 text-[26px] font-extrabold tracking-[-0.03em] leading-[1.2] text-white">
         Your buyers are already asking AI before they call you.
       </h3>
-      <p className="mt-3 text-[13px] leading-[1.75] text-[#99F6E4]">
+      <p className="mt-4 text-[15px] leading-[1.75] text-[#99F6E4]">
         A growing share of B2B buyers open ChatGPT or Perplexity before talking to a vendor. They ask which tools to consider, which brands to avoid.
       </p>
-      <p className="mt-3 text-[13px] leading-[1.75] text-white font-medium">
+      <p className="mt-4 text-[15px] leading-[1.75] text-white font-medium">
         Most companies have no idea what those answers say. Visbow shows you.
       </p>
     </>
@@ -273,23 +263,59 @@ function ContextBento() {
 
   const card3 = (
     <>
-      <span className="font-[var(--font-mono)] text-[10px] tracking-[0.16em] uppercase text-[#92400E]">
+      <span className="font-[var(--font-mono)] text-[12px] tracking-[0.16em] uppercase text-[#92400E]">
         A note from us
       </span>
-      <h3 className="mt-3 text-[22px] font-extrabold tracking-[-0.03em] leading-[1.2] text-[#111827]">
+      <h3 className="mt-4 text-[26px] font-extrabold tracking-[-0.03em] leading-[1.2] text-[#111827]">
         Bootstrapped. Small team.
       </h3>
-      <p className="mt-3 text-[13px] leading-[1.75] text-[#6B7280]">
+      <p className="mt-4 text-[15px] leading-[1.75] text-[#6B7280]">
         No investors, no funding announcement. Just two people building something we wish existed. If you want to talk before we launch, just email us.
       </p>
       <a
         href="mailto:hello@visbow.com"
-        className="mt-5 inline-flex items-center gap-2 text-[13.5px] font-semibold text-[#92400E] hover:text-[#78350F] no-underline transition-colors"
+        className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-[#92400E] hover:text-[#78350F] no-underline transition-colors"
       >
         hello@visbow.com <span className="text-[#D97706]">→</span>
       </a>
     </>
   )
+
+  const COLLAGE = [
+    {
+      id: 0,
+      top: 38,
+      left: "calc(50% - 540px)",
+      rotate: "-8deg",
+      zDefault: 10,
+      bgClass: "bg-white border border-[#E5E7EB]",
+      shadowOff: "0 6px 28px rgba(0,0,0,0.10)",
+      shadowOn: "0 24px 64px rgba(0,0,0,0.24)",
+      content: card1,
+    },
+    {
+      id: 1,
+      top: 10,
+      left: "calc(50% - 210px)",
+      rotate: "0deg",
+      zDefault: 20,
+      bgClass: "bg-[#0D9488]",
+      shadowOff: "0 6px 28px rgba(13,148,136,0.26)",
+      shadowOn: "0 24px 64px rgba(13,148,136,0.46)",
+      content: card2,
+    },
+    {
+      id: 2,
+      top: 40,
+      left: "calc(50% + 120px)",
+      rotate: "7deg",
+      zDefault: 30,
+      bgClass: "bg-[#FFFBEB] border border-[#FDE68A]",
+      shadowOff: "0 6px 28px rgba(0,0,0,0.08)",
+      shadowOn: "0 24px 64px rgba(0,0,0,0.22)",
+      content: card3,
+    },
+  ]
 
   return (
     <section className="px-6 pb-20 max-w-[1200px] mx-auto">
@@ -300,32 +326,37 @@ function ContextBento() {
         </h2>
       </div>
 
-      {/* Desktop: staggered collage — cards overlap only in the padding zone */}
-      <div className="hidden lg:flex lg:flex-col">
-        {/* Card 1 — white, left-aligned, tilted left */}
-        <div
-          className="bg-white border border-[#E5E7EB] rounded-2xl shadow-[0_6px_28px_rgba(0,0,0,0.09)] p-10 pb-24 flex flex-col"
-          style={{ width: 600, alignSelf: "flex-start", transform: "rotate(-1.5deg)", position: "relative", zIndex: 10 }}
-        >
-          {card1}
-        </div>
-        {/* Card 2 — teal, centered, tilted right, overlaps card 1 bottom padding */}
-        <div
-          className="bg-[#0D9488] rounded-2xl shadow-[0_10px_40px_rgba(13,148,136,0.26)] p-10 pb-24 flex flex-col"
-          style={{ width: 640, alignSelf: "center", transform: "rotate(1deg)", position: "relative", zIndex: 20, marginTop: "-64px" }}
-        >
-          {card2}
-        </div>
-        {/* Card 3 — amber, right-aligned, tilted left, overlaps card 2 bottom padding */}
-        <div
-          className="bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl shadow-[0_6px_28px_rgba(0,0,0,0.08)] p-10 pb-20 flex flex-col"
-          style={{ width: 580, alignSelf: "flex-end", transform: "rotate(-0.8deg)", position: "relative", zIndex: 30, marginTop: "-56px" }}
-        >
-          {card3}
-        </div>
+      {/* Desktop: photo collage — spread across full width, arch heights, casual rotations */}
+      <div className="hidden lg:block relative" style={{ height: 540 }}>
+        {COLLAGE.map((c) => {
+          const isHov = hovered === c.id
+          const anyHov = hovered !== null
+          return (
+            <div
+              key={c.id}
+              className={`absolute w-[420px] h-[420px] rounded-2xl p-9 flex flex-col ${c.bgClass}`}
+              style={{
+                top: c.top,
+                left: c.left,
+                transformOrigin: "50% 85%",
+                zIndex: isHov ? 40 : c.zDefault,
+                transform: `rotate(${isHov ? "0deg" : c.rotate}) scale(${isHov ? 1.05 : 1})`,
+                boxShadow: isHov ? c.shadowOn : c.shadowOff,
+                opacity: anyHov && !isHov ? 0.65 : 1,
+                transition:
+                  "transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, opacity 0.2s ease",
+                cursor: "default",
+              }}
+              onMouseEnter={() => setHovered(c.id)}
+              onMouseLeave={() => setHovered(null)}
+            >
+              {c.content}
+            </div>
+          )
+        })}
       </div>
 
-      {/* Mobile: stacked, slight tilt for visual warmth */}
+      {/* Mobile: stacked, slight tilt */}
       <div className="flex flex-col gap-6 lg:hidden">
         <div className="bg-white border border-[#E5E7EB] rounded-2xl p-7 flex flex-col" style={{ transform: "rotate(-0.5deg)" }}>
           {card1}
@@ -343,51 +374,36 @@ function ContextBento() {
 
 // ─── Features Section ─────────────────────────────────────────────────────────
 
-const FEATURES = [
+const FEATURES_LIST = [
   {
+    num: "01",
     title: "Multi-Platform Tracking",
-    description: "Track your brand across ChatGPT, Claude, Perplexity, and Gemini in a single view.",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-        <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-      </svg>
-    ),
+    body: "Your brand vs. competitors across ChatGPT, Claude, Perplexity and Gemini. Four surfaces, one view, refreshed every week.",
+    color: "#3B82F6",
   },
   {
+    num: "02",
     title: "Competitor Intelligence",
-    description: "See how your competitors rank on each surface. Know who's outranking you and on which queries.",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-        <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
+    body: "See which competitors own the queries you're invisible on, and which AI surfaces they dominate. Know before your buyers do.",
+    color: "#7C3AED",
   },
   {
-    title: "Weekly Reports",
-    description: "Actionable insights in your inbox every week. Know exactly what changed and what to do.",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
+    num: "03",
+    title: "Weekly Digest",
+    body: "A concise report in your inbox every week. What changed, what moved, what needs your attention next.",
+    color: "#0D9488",
   },
   {
-    title: "Sentiment Analysis",
-    description: "Understand the tone — positive, neutral, or negative — for every mention across every surface.",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-        <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    num: "04",
+    title: "Sentiment Scoring",
+    body: "Every mention scored: positive, neutral, or negative. Across every surface, updated weekly.",
+    color: "#4F46E5",
   },
   {
-    title: "Historical Data",
-    description: "Track how your visibility evolves week over week. Spot trends before they become problems.",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    num: "05",
+    title: "Historical Trends",
+    body: "Track how your visibility evolves week over week. Spot a declining trend before it becomes a problem.",
+    color: "#059669",
   },
 ]
 
@@ -400,46 +416,16 @@ function FeaturesSection() {
           Five layers of visibility
         </h2>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[3px] bg-[#EBEBEB] rounded-2xl overflow-hidden">
-
-        {/* Card 1 — featured, spans 2 cols */}
-        <div className="col-span-1 sm:col-span-2 lg:col-span-2 bg-white p-8 flex flex-col gap-5 group hover:bg-[#F8FBFF] transition-colors cursor-default">
-          <div className="w-12 h-12 rounded-xl bg-[#EFF6FF] flex items-center justify-center text-[#3B82F6] group-hover:bg-[#3B82F6] group-hover:text-white transition-colors">
-            {FEATURES[0].icon}
-          </div>
-          <div>
-            <h3 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#0A0A0A]">{FEATURES[0].title}</h3>
-            <p className="mt-2 text-[15px] leading-[1.7] text-[#555] max-w-[480px]">{FEATURES[0].description}</p>
-          </div>
-          <div className="flex flex-wrap gap-2 mt-auto">
-            {PLATFORMS.map((p) => (
-              <span key={p} className="font-[var(--font-mono)] text-[11px] text-[#3B82F6] border border-[#DBEAFE] bg-[#EFF6FF] rounded-full px-3 py-0.5">{p}</span>
-            ))}
-          </div>
-        </div>
-
-        {/* Card 2 */}
-        <div className="bg-[#F7F7F5] p-7 flex flex-col gap-4 group hover:bg-[#F8FBFF] transition-colors cursor-default">
-          <div className="w-12 h-12 rounded-xl bg-white border border-[#EBEBEB] flex items-center justify-center text-[#3B82F6] group-hover:bg-[#3B82F6] group-hover:text-white transition-colors">
-            {FEATURES[1].icon}
-          </div>
-          <div>
-            <h3 className="text-[17px] font-bold tracking-[-0.01em] text-[#0A0A0A]">{FEATURES[1].title}</h3>
-            <p className="mt-1.5 text-[13.5px] leading-[1.65] text-[#666]">{FEATURES[1].description}</p>
-          </div>
-        </div>
-
-        {/* Cards 3–5 — equal, fill row 2 */}
-        {FEATURES.slice(2).map((f, i) => (
-          <div key={f.title} className={`${i === 1 ? "bg-[#F7F7F5]" : "bg-white"} p-7 flex flex-col gap-4 group hover:bg-[#F8FBFF] transition-colors cursor-default`}>
-            <div className="w-12 h-12 rounded-xl bg-[#EFF6FF] flex items-center justify-center text-[#3B82F6] group-hover:bg-[#3B82F6] group-hover:text-white transition-colors">
-              {f.icon}
-            </div>
-            <div>
-              <h3 className="text-[17px] font-bold tracking-[-0.01em] text-[#0A0A0A]">{f.title}</h3>
-              <p className="mt-1.5 text-[13.5px] leading-[1.65] text-[#666]">{f.description}</p>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {FEATURES_LIST.map((item) => (
+          <div key={item.num} className="rounded-xl border border-[#EBEBEB] bg-white p-6 flex flex-col gap-3">
+            <span className="font-[var(--font-mono)] text-[13px] font-bold" style={{ color: item.color }}>
+              {item.num}
+            </span>
+            <h3 className="text-[16px] font-bold tracking-[-0.01em] text-[#0A0A0A] leading-snug">
+              {item.title}
+            </h3>
+            <p className="text-[13px] leading-[1.7] text-[#666]">{item.body}</p>
           </div>
         ))}
       </div>
@@ -448,44 +434,6 @@ function FeaturesSection() {
 }
 
 // ─── Architecture Section ─────────────────────────────────────────────────────
-
-const ARCH_STEPS = [
-  {
-    label: "Input",
-    title: "Brand setup",
-    desc: "Add your brand name, key competitors, and topics you want tracked.",
-    tags: null,
-    done: false,
-  },
-  {
-    label: "Scan",
-    title: "Weekly AI queries",
-    desc: "Automated queries run on each surface every 7 days.",
-    tags: ["ChatGPT", "Claude", "Perplexity", "Gemini"],
-    done: false,
-  },
-  {
-    label: "Collect",
-    title: "Every response logged",
-    desc: "Each mention, ranking position, and cited source is stored.",
-    tags: null,
-    done: false,
-  },
-  {
-    label: "Analyse",
-    title: "Pattern detection",
-    desc: "Sentiment scored, competitor gaps surfaced, source attribution tracked.",
-    tags: null,
-    done: false,
-  },
-  {
-    label: "Output",
-    title: "Weekly digest",
-    desc: "Email report and dashboard update, every week.",
-    tags: null,
-    done: true,
-  },
-]
 
 const ARCH_CARDS = [
   {
@@ -502,67 +450,22 @@ const ARCH_CARDS = [
   },
 ]
 
-function ArchFlow() {
-  return (
-    <div className="relative py-1">
-      <div
-        className="absolute top-[18px] bottom-[18px] w-px"
-        style={{
-          left: 15,
-          background: "linear-gradient(to bottom, #DBEAFE 0%, #3B82F6 100%)",
-        }}
-      />
-      <div className="flex flex-col gap-6">
-        {ARCH_STEPS.map((s) => (
-          <div key={s.title} className="flex items-start gap-4">
-            <div
-              className={`w-[30px] h-[30px] rounded-full shrink-0 z-10 flex items-center justify-center border-2 ${
-                s.done ? "bg-[#3B82F6] border-[#3B82F6]" : "bg-white border-[#DBEAFE]"
-              }`}
-            >
-              {s.done ? (
-                <div className="w-2 h-2 rounded-full bg-white" />
-              ) : (
-                <div className="w-1.5 h-1.5 rounded-full bg-[#BFDBFE]" />
-              )}
-            </div>
-            <div className="flex-1 pt-0.5">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`font-[var(--font-mono)] text-[9px] uppercase tracking-[0.14em] ${
-                    s.done ? "text-[#3B82F6]" : "text-[#C0C0C0]"
-                  }`}
-                >
-                  {s.label}
-                </span>
-              </div>
-              <h4
-                className={`mt-0.5 text-[14px] font-bold tracking-[-0.01em] ${
-                  s.done ? "text-[#2563EB]" : "text-[#111827]"
-                }`}
-              >
-                {s.title}
-              </h4>
-              <p className="mt-0.5 text-[12px] leading-[1.6] text-[#9CA3AF]">{s.desc}</p>
-              {s.tags && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {s.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="font-[var(--font-mono)] text-[10px] bg-[#111827] text-white rounded-md px-2 py-0.5"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+const ARCH_DIAGRAM = `flowchart TD
+    A([Your brand + competitors]):::anchor --> B[Weekly automated scan]:::process
+    B --> C[ChatGPT]:::ai
+    B --> D[Claude]:::ai
+    B --> E[Perplexity]:::ai
+    B --> F[Gemini]:::ai
+    C & D & E & F --> G[Responses collected]:::process
+    G --> H[Analysis engine]:::process
+    H --> I[Sentiment scoring]:::output
+    H --> J[Competitor gap detection]:::output
+    H --> K[Source attribution]:::output
+    I & J & K --> L([Weekly digest → your inbox]):::anchor
+    classDef anchor  fill:#0D9488,stroke:#0D9488,color:#fff,font-weight:600
+    classDef process fill:#F1F5F9,stroke:#94A3B8,stroke-width:1.5,color:#334155,font-weight:500
+    classDef ai      fill:#DCFCE7,stroke:#16A34A,stroke-width:2,color:#14532D,font-weight:600
+    classDef output  fill:#F5F3FF,stroke:#8B5CF6,stroke-width:1.5,color:#4C1D95,font-weight:500`
 
 function ArchitectureSection() {
   return (
@@ -575,30 +478,50 @@ function ArchitectureSection() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-[3px] bg-[#EBEBEB] rounded-2xl overflow-hidden">
-        {/* Left: custom flow diagram */}
         <div className="bg-white p-8 flex flex-col">
           <Label>System flow</Label>
           <div className="mt-6 flex-1">
-            <ArchFlow />
+            <MermaidChart code={ARCH_DIAGRAM} id="arch-flow" />
           </div>
         </div>
 
-        {/* Right: 3 step detail cards */}
         <div className="flex flex-col gap-[3px]">
           {ARCH_CARDS.map((c, i) => (
             <div key={c.title} className="flex-1 bg-[#F7F7F5] px-7 py-6 flex flex-row items-start gap-5">
-              <span className="font-[var(--font-mono)] text-[28px] font-bold leading-none text-[#DBEAFE] select-none shrink-0 pt-0.5">
+              <span className="font-[var(--font-mono)] text-[28px] font-bold leading-none text-[#0D9488] select-none shrink-0 pt-0.5">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>
-                <h3 className="text-[17px] font-extrabold tracking-[-0.02em] text-[#0A0A0A]">
-                  {c.title}
-                </h3>
+                <h3 className="text-[17px] font-extrabold tracking-[-0.02em] text-[#0A0A0A]">{c.title}</h3>
                 <p className="mt-1.5 text-[13px] leading-[1.65] text-[#666]">{c.body}</p>
               </div>
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── CTA Section ─────────────────────────────────────────────────────────────
+
+function CTASection() {
+  return (
+    <section className="px-6 py-20 max-w-[1200px] mx-auto">
+      <div
+        className="rounded-2xl px-8 py-14 flex flex-col items-center text-center gap-6"
+        style={{ background: "linear-gradient(160deg, #EBF0FA 0%, #E4ECF5 100%)" }}
+      >
+        <p className="font-[var(--font-mono)] text-[11px] tracking-[0.12em] uppercase text-[#6B6B6B]">
+          Pre-launch · Join the waitlist
+        </p>
+        <h2 className="text-[clamp(26px,3.5vw,42px)] font-extrabold tracking-[-0.03em] text-[#0A0A0A] max-w-[560px] leading-tight">
+          Be first to know when Visbow ships.
+        </h2>
+        <p className="text-[15px] text-[#6B6B6B] max-w-[440px] leading-relaxed">
+          One email when we launch. No drip campaigns, no noise.
+        </p>
+        <WaitlistForm />
       </div>
     </section>
   )
@@ -632,13 +555,13 @@ function Footer() {
 export default function Page() {
   return (
     <div className="min-h-screen bg-white text-[#0A0A0A]">
-      <Nav />
       <main>
         <Hero />
         <BentoGrid />
         <ContextBento />
         <FeaturesSection />
         <ArchitectureSection />
+        <CTASection />
       </main>
       <Footer />
     </div>
