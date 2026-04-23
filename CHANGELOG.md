@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [v0.4.1](https://github.com/ContentOperations/landing-page/releases/tag/v0.4.1) | 2026-04-23
+
+### Bug Fixes
+- build issue [61ee3c2](https://github.com/ContentOperations/landing-page/commit/61ee3c2)
+### Other
+- fixed build issue [a960586](https://github.com/ContentOperations/landing-page/commit/a960586)
+
 ## [v0.4.0](https://github.com/ContentOperations/landing-page/releases/tag/v0.4.0) | 2026-04-23
 
 ### Features
